@@ -110,6 +110,74 @@
             color: #b3b3b3;
         }
     </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const submitButton = document.getElementById('submitButton');
+    const errorMessagesContainer = document.querySelector('.error-messages');
+
+    function enableSubmitButton() {
+        submitButton.removeAttribute('disabled');
+    }
+
+    function disableSubmitButton() {
+        submitButton.setAttribute('disabled', 'true');
+    }
+
+    function checkFormValidity() {
+        const login = document.querySelector('input[type="text"][placeholder="Login"]');
+        const password = document.querySelector('input[type="password"][placeholder="Mot de passe"]');
+        const confirmPassword = document.querySelector('input[type="password"][placeholder="Confirmer votre mot de passe"]');
+
+        const loginRegex = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/;
+        const passwordRegex = /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/;
+
+        const isLoginValid = loginRegex.test(login.value.trim());
+        const isPasswordValid = passwordRegex.test(password.value.trim());
+        const isConfirmPasswordValid = password.value === confirmPassword.value;
+
+        if (!isLoginValid) {
+            displayErrorMessage('Login doit contenir au moins 6 caractères (a-z, A-Z, 0-9, et des symboles)');
+        }
+
+        if (!isPasswordValid) {
+            displayErrorMessage('Mot de passe doit contenir au moins 6 caractères (a-z, A-Z, 0-9, et des symboles)');
+        }
+
+        if (!isConfirmPasswordValid) {
+            displayErrorMessage('Les mots de passe ne correspondent pas');
+        }
+
+        if (isLoginValid && isPasswordValid && isConfirmPasswordValid) {
+            enableSubmitButton();
+            return true;
+        } else {
+            disableSubmitButton();
+            return false;
+        }
+    }
+
+    form.addEventListener('input', checkFormValidity);
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        errorMessagesContainer.innerHTML = '';
+
+        checkFormValidity(); // Check validity before redirection
+        // Redirecting only if form is valid
+        // window.location.href = 'login.html';
+    });
+
+    function displayErrorMessage(message) {
+        const errorMessageElement = document.createElement('p');
+        errorMessageElement.textContent = message;
+        errorMessageElement.classList.add('error-message');
+        errorMessagesContainer.appendChild(errorMessageElement);
+    }
+});
+
+</script>
 </head>
 <body>
     <div class="form-wrapper">
@@ -117,11 +185,7 @@
         <form>
             <div class="form-control">
                 <input type="text" required>
-                <label>Nom</label>
-            </div>
-            <div class="form-control">
-                <input type="text" required>
-                <label>Prénom</label>
+                <label>Login</label>
             </div>
             <div class="form-control">
                 <input type="date" required>
@@ -143,8 +207,15 @@
                 <input type="password" required>
                 <label>Confirmer votre mot de passe</label>
             </div>
-            <button type="submit" href="login.html">Continuer</button>
+            <div class="form-control">
+                <input type="number" required>
+                <label>Solde</label>
+            </div>
+            <button type="submit" id="submitButton">Continuer</button>
+            <div class="error-messages"></div>
         </form>
     </div>
 </body>
+
+
 </html>
